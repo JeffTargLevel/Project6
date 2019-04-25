@@ -42,6 +42,12 @@ CREATE TABLE public.Customer (
 );
 
 
+CREATE TABLE public.Basket (
+                id INTEGER NOT NULL,
+                CONSTRAINT basket_pk PRIMARY KEY (id)
+);
+
+
 CREATE TABLE public.Stock (
                 id INTEGER NOT NULL,
                 id_pizzeria INTEGER NOT NULL,
@@ -63,20 +69,17 @@ CREATE TABLE public.Pizza (
 
 CREATE TABLE public.OrderLine (
                 id INTEGER NOT NULL,
+                id_basket INTEGER NOT NULL,
+                id_pizza INTEGER NOT NULL,
                 quantity DOUBLE PRECISION NOT NULL,
                 CONSTRAINT orderline_pk PRIMARY KEY (id)
-);
-
-
-CREATE TABLE public.Basket (
-                id INTEGER NOT NULL,
-                CONSTRAINT basket_pk PRIMARY KEY (id)
 );
 
 
 CREATE TABLE public.PizzaIngredients (
                 id INTEGER NOT NULL,
                 id_pizza INTEGER NOT NULL,
+                id_ingredient INTEGER NOT NULL,
                 quantity DOUBLE PRECISION NOT NULL,
                 CONSTRAINT pizzaingredients_pk PRIMARY KEY (id)
 );
@@ -116,7 +119,7 @@ ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
 ALTER TABLE public.PizzaIngredients ADD CONSTRAINT ingredient_pizzaingredients_fk
-FOREIGN KEY (id)
+FOREIGN KEY (id_ingredient)
 REFERENCES public.Ingredient (id)
 ON DELETE NO ACTION
 ON UPDATE NO ACTION
@@ -136,6 +139,20 @@ ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
+ALTER TABLE public.Order ADD CONSTRAINT basket_order_fk
+FOREIGN KEY (id)
+REFERENCES public.Basket (id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.OrderLine ADD CONSTRAINT basket_orderline_fk
+FOREIGN KEY (id_basket)
+REFERENCES public.Basket (id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
 ALTER TABLE public.PizzaIngredients ADD CONSTRAINT pizza_pizzaingredients_fk
 FOREIGN KEY (id_pizza)
 REFERENCES public.Pizza (id)
@@ -144,22 +161,8 @@ ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
 ALTER TABLE public.OrderLine ADD CONSTRAINT pizza_orderline_fk
-FOREIGN KEY (id)
+FOREIGN KEY (id_pizza)
 REFERENCES public.Pizza (id)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
-
-ALTER TABLE public.Basket ADD CONSTRAINT orderline_basket_fk
-FOREIGN KEY (id)
-REFERENCES public.OrderLine (id)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
-
-ALTER TABLE public.Order ADD CONSTRAINT basket_order_fk
-FOREIGN KEY (id)
-REFERENCES public.Basket (id)
 ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
